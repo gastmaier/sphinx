@@ -17,7 +17,7 @@ from sphinx.util.docutils import SphinxTranslator
 from sphinx.util.images import get_image_size
 
 if TYPE_CHECKING:
-    from docutils.nodes import Element, Node, Text
+    from docutils.nodes import Element, Node, Text, section
 
     from sphinx.builders import Builder
     from sphinx.builders.html import StandaloneHTMLBuilder
@@ -496,6 +496,15 @@ class HTML5Translator(SphinxTranslator, BaseTranslator):  # type: ignore[misc]
                 self.add_permalink_ref(node, _('Link to this term'))
 
             self.body.append('</dt>')
+
+    def visit_section(self, node: section) -> None:
+        if self.builder.name == 'singlehtml' and node['ids']:
+            docname = self.docnames[-1]
+            node['ids'][0] = 'document-' + docname + '#' + node['ids'][0]
+        super().visit_section(node)
+
+    def depart_section(self, node: section) -> None:
+        super().depart_section(node)
 
     # overwritten
     def visit_title(self, node: nodes.title) -> None:
