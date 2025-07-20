@@ -395,10 +395,11 @@ class HTML5Translator(SphinxTranslator, BaseTranslator):  # type: ignore[misc]
         if isinstance(node.parent, nodes.section):
             if self.builder.name == 'singlehtml':
                 docname = self.docnames[-1]
-                anchorname = f'{docname}/#{node.parent["ids"][0]}'
+                # Remove document-
+                anchorname = node.parent['ids'][0][9:]
                 if anchorname not in self.builder.secnumbers:
                     # try first heading which has no anchor
-                    anchorname = f'{docname}/'
+                    anchorname = docname
             else:
                 anchorname = '#' + node.parent['ids'][0]
                 if anchorname not in self.builder.secnumbers:
